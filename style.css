@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f9f9f9;
+}
+
+.container {
+    /* Usuwamy flex, bo Bootstrap używa grid systemu */
+    /* display: flex;
+    flex-wrap: wrap;
+    gap: 20px; */
+    /* Bootstrap grid zapewnia responsywność */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.panel {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    flex: 1;
+    min-width: 300px;
+    margin-bottom: 20px;
+}
+
+.panel-title {
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.summary {
+    flex: 1 1 100%;
+    margin-top: 20px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+select, input[type="range"], input[type="number"] {
+    width: 100%;
+}
+
+.card {
+    height: auto !important;
+    min-height: unset !important;
+    /* Bootstrap already provides padding and border-radius */
+    margin-bottom: 0.75rem;
+}
+
+@media (max-width: 991.98px) {
+    .col-lg-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .card.h-100 {
+        height: auto !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .panel, .card {
+        padding: 10px;
+    }
+    .d-flex.align-items-center {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    .form-control, .form-range {
+        width: 100% !important;
+        min-width: 0;
+    }
+}
+
+ #taxChart {
+      max-width: 400px;
+      height: 300px;
+      margin: 0 auto;
+    }

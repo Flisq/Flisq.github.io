@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaxIT</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-light">
+  <div class="container py-4">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card shadow-sm p-3 mb-4">
+          <div class="d-flex justify-content-center gap-3">
+            <input type="radio" class="btn-check" name="modeType" id="modeUOP" value="UOP" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="modeUOP">UOP/Umowa Zlecenie</label>
+            <input type="radio" class="btn-check" name="modeType" id="modeB2B" value="B2B" autocomplete="off">
+            <label class="btn btn-outline-primary" for="modeB2B">B2B</label>
+            <!-- Usunięto tryb porównywarki -->
+          </div>
+        </div>
+        <div id="uopPanel">
+          <div class="card shadow-sm p-4">
+            <h2 class="card-title mb-3">Faktura miesięczna</h2>
+            <div class="mb-3">
+              <div>
+                <input type="radio" class="btn-check" name="inputType" id="inputInvoice" value="invoice"
+                  autocomplete="off" checked>
+                <label class="btn btn-outline-primary btn-sm" for="inputInvoice">Kwota faktury miesięcznej</label>
+                <input type="radio" class="btn-check" name="inputType" id="inputHourly" value="hourly" autocomplete="off">
+                <label class="btn btn-outline-primary btn-sm" for="inputHourly">Stawka godzinowa brutto</label>
+              </div>
+            </div>
+            <div class="mb-3" id="invoiceInputGroup">
+              <label for="invoice" class="form-label">Twoja miesięczna faktura brutto</label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range me-3" id="invoice" min="5000" max="30000" step="500" value="15000"
+                  style="max-width: 200px;">
+                <input type="number" class="form-control" id="invoiceManual" min="5000" max="30000" step="1" value="15000"
+                  style="width: 120px;">
+                <span class="ms-2">PLN</span>
+              </div>
+            </div>
+            <div class="mb-3 d-none" id="hourlyInputGroup">
+              <label for="hourlyRate" class="form-label">Stawka godzinowa brutto</label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range me-3" id="hourlyRateSlider" min="31" max="300" step="1" value="100"
+                  style="max-width: 200px;">
+                <input type="number" class="form-control" id="hourlyRate" min="31" max="300" step="1" value="100"
+                  style="width: 120px;">
+                <span class="ms-2">PLN</span>
+              </div>
+              <label for="hoursPerMonth" class="form-label mt-2">Liczba godzin w miesiącu</label>
+              <input type="number" class="form-control" id="hoursPerMonth" min="1" max="720" step="1" value="160">
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="remoteWork">
+              <label class="form-check-label" for="remoteWork">Praca w miejscu zamieszkania</label>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="under26">
+              <label class="form-check-label" for="under26">Mam mniej niż 26 lat - zerowy PIT</label>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="student">
+              <label class="form-check-label" for="student">Status studenta (brak składek ZUS)</label>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="PPK">
+              <label class="form-check-label" for="PPK">PPK (Pracownicze Plany Kapitałowe)</label>
+            </div>
+            <div class="mb-3 d-none" id="ppkEmployeeGroup">
+              <label for="ppkEmployeeSlider" class="form-label">PPK Pracownik </label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range me-3" id="ppkEmployeeSlider" min="2" max="4" step="0.1" value="2"
+                  style="max-width: 200px;">
+                <input type="number" class="form-control" id="ppkEmployeeInput" min="2" max="4" step="0.1" value="2"
+                  style="width: 80px;">
+                <span class="ms-2">%</span>
+              </div>
+            </div>
+            <div class="mb-3 d-none" id="ppkEmployerGroup">
+              <label for="ppkEmployerSlider" class="form-label">PPK Pracodawca</label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range me-3" id="ppkEmployerSlider" min="1.5" max="4" step="0.1"
+                  value="1.5" style="max-width: 200px;">
+                <input type="number" class="form-control" id="ppkEmployerInput" min="1.5" max="4" step="0.1" value="1.5"
+                  style="width: 80px;">
+                <span class="ms-2">%</span>
+              </div>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="kupCheckbox">
+              <label class="form-check-label" for="kupCheckbox">Koszty uzyskania przychodu (KUP)</label>
+            </div>
+            <div class="mb-3 d-none" id="kupSliderGroup">
+              <label for="kupSlider" class="form-label">Wysokość kosztów uzyskania przychodu (KUP) [%]</label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range me-3" id="kupSlider" min="0" max="100" step="10" value="20"
+                  style="max-width: 200px;">
+                <input type="number" class="form-control" id="kupInput" min="0" max="100" step="10" value="20"
+                  style="width: 80px;">
+                <span class="ms-2">%</span>
+              </div>
+            </div>
+          </div>
+          <!-- Przeniesiony wykres UOP pod fakturą miesięczną -->
+          <div id="chartPanelUOP" class="card shadow-sm p-4 mt-4">
+            <h4 class="card-title mb-3">Struktura miesięcznej faktury</h4>
+            <div class="d-flex justify-content-center mb-3">
+              <canvas id="taxChartMonth" width="350" height="350"></canvas>
+            </div>
+          </div>
+        </div>
+        <div id="b2bPanel" class="d-none">
+          <div class="card shadow-sm p-4">
+            <h2 class="card-title mb-3">Faktura miesięczna (B2B)</h2>
+            <div class="mb-3">
+              <div>
+                <input type="radio" class="btn-check" name="inputTypeB2B" id="inputInvoiceB2B" value="invoice"
+                  autocomplete="off" checked>
+                <label class="btn btn-outline-primary btn-sm" for="inputInvoiceB2B">Kwota faktury miesięcznej</label>
+                <input type="radio" class="btn-check" name="inputTypeB2B" id="inputHourlyB2B" value="hourly"
+                  autocomplete="off">
+                <label class="btn btn-outline-primary btn-sm" for="inputHourlyB2B">Stawka godzinowa brutto</label>
+              </div>
+            </div>
+            <div class="mb-3" id="invoiceInputGroupB2B">
+              <label for="invoiceB2B" class="form-label">Twoja miesięczna faktura brutto</label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range me-3" id="invoiceB2B" min="5000" max="30000" step="500"
+                  value="15000" style="max-width: 200px;">
+                <input type="number" class="form-control" id="invoiceManualB2B" min="5000" max="30000" step="1"
+                  value="15000" style="width: 120px;">
+                <span class="ms-2">PLN</span>
+              </div>
+            </div>
+               <div class="mb-3 d-none" id="hourlyInputGroupB2B">
+              <label for="hourlyRateB2B" class="form-label">Stawka godzinowa brutto</label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range me-3" id="hourlyRateSliderB2B" min="31" max="300" step="1"
+                  value="100" style="max-width: 200px;">
+                <input type="number" class="form-control" id="hourlyRateB2B" min="31" max="300" step="1" value="100"
+                  style="width: 120px;">
+                <span class="ms-2">PLN</span>
+              </div>
+              <label for="hoursPerMonthB2B" class="form-label mt-2">Liczba godzin w miesiącu</label>
+              <input type="number" class="form-control" id="hoursPerMonthB2B" min="1" max="720" step="1" value="160">
+            </div>
+            <!-- ComboBox forma opodatkowania -->
+            <div class="mb-3">
+              <label for="b2bTaxType" class="form-label">Forma opodatkowania</label>
+              <select id="b2bTaxType" class="form-select">
+                <option value="skala">12/32% skala podatkowa</option>
+                <option value="ryczalt8_5">8,5% ryczałt</option>
+                <option value="ryczalt12">12% ryczałt</option>
+                <option value="liniowy19">19% podatek liniowy</option>
+              </select>
+            </div>
+            <!-- ComboBox ZUS -->
+            <div class="mb-3">
+              <label for="b2bZusType" class="form-label">ZUS</label>
+              <select id="b2bZusType" class="form-select">
+                <option value="pelny">Pełny ZUS</option>
+                <option value="maly">Mały ZUS</option>
+                <option value="ulga">Ulga na start</option>
+              </select>
+            </div>
+            <!-- Dodane checkboxy pod comboboxami -->
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="b2bChorobowe">
+              <label class="form-check-label" for="b2bChorobowe">Dobrowolne składki chorobowe</label>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="b2bKoszty">
+              <label class="form-check-label" for="b2bKoszty">Koszty działalności</label>
+            </div>
+            <!-- Pole na wysokość kosztów, domyślnie ukryte -->
+            <div class="mb-3 d-none" id="b2bKosztyValueGroup">
+              <label for="b2bKosztyValue" class="form-label">Wysokość miesięcznych kosztów działalności</label>
+              <input type="number" class="form-control" id="b2bKosztyValue" min="0" max="100000" step="1" value="1000" style="width: 150px;">
+              <span class="ms-2">PLN</span>
+              <!-- Dodano wybór % VAT do kosztów -->
+              <div class="mt-2">
+                <label for="b2bVatKoszty" class="form-label mb-0">Stawka VAT kosztów</label>
+                <select id="b2bVatKoszty" class="form-select form-select-sm" style="width: 100px; display: inline-block;">
+                  <option value="0">0%</option>
+                  <option value="5">5%</option>
+                  <option value="8">8%</option>
+                  <option value="23">23%</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="b2bVatCheckbox">
+              <label class="form-check-label" for="b2bVatCheckbox">Jestem vatowcem</label>
+            </div>
+          </div>
+          <!-- Przeniesiony wykres B2B pod fakturą miesięczną B2B -->
+          <div id="chartPanelB2B" class="card shadow-sm p-4 mt-4 d-none">
+            <h4 class="card-title mb-3">Struktura miesięcznej faktury (B2B)</h4>
+            <div class="d-flex justify-content-center mb-3">
+              <canvas id="taxChartMonthB2B" width="350" height="350"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Usunięto comparePanel -->
+      </div>
+      <div class="col-lg-6" id="summaryPanels">
+        <div class="card shadow-sm p-4 mb-4">
+          <h2 class="card-title mb-3">Podsumowanie roczne</h2>
+          <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Faktura brutto (rok):</span><span id="nettoSummaryYear"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Podatek dochodowy (rok):</span><span id="taxSummaryYear"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>ZUS (rok):</span><span id="zusSummaryYear"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between d-none" id="costsSummaryYearRow">
+              <span>Koszty (rok):</span><span id="costsSummaryYear"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between d-none" id="vatSummaryYearRow">
+              <span>VAT do zapłaty (rok):</span><span id="vatSummaryYear"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between fw-bold">
+              <span>Dochód netto (rok):</span><span id="finalSummaryYear"></span>
+            </li>
+          </ul>
+        </div>
+        <div class="card shadow-sm p-4">
+          <h3 class="card-title mb-3">Podsumowanie miesięczne</h3>
+          <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Faktura brutto:</span><span id="nettoSummary"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Podatek dochodowy:</span><span id="taxSummary"></span>
+            </li>
+             <li class="list-group-item d-flex justify-content-between">
+              <span>Składka zdrowotna:</span><span id="zusHealthSummary"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Składka emerytalna:</span><span id="zusRetirementSummary"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Składka rentowa:</span><span id="zusDisabilitySummary"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between d-none" id="zusAccidentSummaryRow">
+              <span>Składka wypadkowa:</span><span id="zusAccidentSummary"></span>
+            </li> 
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Składka chorobowa:</span><span id="zusSicknessSummary"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between d-none" id="zusFundSummaryRow">
+              <span>Fundusz Pracy i Solidarnościowy:</span><span id="zusFundSummary"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between fw-bold">
+              <span>Razem ZUS:</span><span id="zusSummary"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between fw-bold">
+              <span>Netto:</span><span id="finalSummary"></span>
+            </li>
+          </ul>
+        </div>
+        <!-- Usunięto wykresy z prawej strony -->
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
